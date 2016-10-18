@@ -11,6 +11,8 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'HotOrNot\VotingController@index');
+Route::post('vote', 'HotOrNot\VotingController@vote');
+Route::get('add-user', 'HotOrNot\SubjectController@add');
+Route::post('users', 'HotOrNot\SubjectController@post');
+Route::get('statistics', 'HotOrNot\ReportingController@index');
