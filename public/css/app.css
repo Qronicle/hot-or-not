@@ -63,7 +63,6 @@ header {
     vertical-align: middle;
     -webkit-transition: 1s ease-in-out opacity;
     transition: 1s ease-in-out opacity;
-    overflow: hidden;
     padding-bottom: 20px;
     /*&.subject-1 {
       background: blue;
