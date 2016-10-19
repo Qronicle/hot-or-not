@@ -57,7 +57,7 @@ class SubjectService
             if (!$subject2) {
                 throw new \Exception('Could not find subject ' . $newMatches[0]->id);
             }
-            // Create a new match
+            // Create a new match entry in de database
             try {
                 $ids = [$subject1->id, $subject2->id];
                 sort($ids);
@@ -81,8 +81,14 @@ class SubjectService
         return rand(0, 100) > 50 ? [1 => $subject1, $subject2] : [1 => $subject2, $subject1];
     }
 
+    /**
+     * Mark a subject as show
+     *
+     * @param Subject $subject
+     */
     public function markSubjectAsShown(Subject $subject)
     {
+        // @todo single update statement
         DB::table('subjects')->whereId($subject->id)
             ->update(['last_shown_at' => new \DateTime()]);
         DB::table('subjects')->whereId($subject->id)
@@ -90,6 +96,8 @@ class SubjectService
     }
 
     /**
+     * Save the result of a match
+     *
      * @param int $wonSubjectId
      * @param int $lostSubjectId
      */
@@ -114,13 +122,29 @@ class SubjectService
         DB::update($query);
     }
 
+    /**
+     * Get the X most popular subjects
+     * (based on win percentage for users that were shown more than 5 times)
+     *
+     * @param int $limit
+     *
+     * @return mixed
+     */
     public function getMostPopularSubjects($limit = 50)
     {
         return Subject::where('times_shown', '>', 5)->orderBy('percentage_won', 'desc')->take($limit)->get();
     }
 
+    /**
+     * Get a Match object based on two subjects
+     *
+     * @param $subject1Id
+     * @param $subject2Id
+     *
+     * @return mixed
+     */
     public function getMatch($subject1Id, $subject2Id) {
-        // Swap subject ID when the first is higher than the second
+        // Swap subject ID when the first is higher than the second (bonus algorithm)
         if ($subject1Id > $subject2Id) {
             $subject1Id += $subject2Id;
             $subject2Id = $subject1Id - $subject2Id;

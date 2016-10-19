@@ -22,9 +22,18 @@ use Illuminate\Support\Facades\DB;
  */
 class VotingController extends Controller
 {
+    /**
+     * Display a face-off between two random subjects
+     *
+     * @param SubjectService $subjectService
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index(SubjectService $subjectService)
     {
+        // Fetch two subjects
         $subjects   = $subjectService->getSubjectsForMatch();
+        // Save subjects to session for later
         $sessionKey = $this->setSessionSubjects($subjects);
 
         return view('public.vote', [
@@ -34,9 +43,19 @@ class VotingController extends Controller
         ]);
     }
 
+    /**
+     * Process a vote
+     *
+     * When this is an ajax request, respond with new vote html
+     *
+     * @param Request        $request
+     * @param SubjectService $subjectService
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
+     */
     public function vote(Request $request, SubjectService $subjectService)
     {
-        // Process the vote
+        // Process the vote, note that we do not inform the user of an invalid vote
         $this->validateVote($request, $subjectService);
 
         // When this is not an ajax request, redirect to the homepage
@@ -77,6 +96,14 @@ class VotingController extends Controller
         return $key;
     }
 
+    /**
+     * Validate and process vote
+     *
+     * @param Request        $request
+     * @param SubjectService $subjectService
+     *
+     * @return bool|int Chosen subject ID on success, FALSE on error
+     */
     protected function validateVote(Request $request, SubjectService $subjectService)
     {
         // Get input

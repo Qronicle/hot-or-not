@@ -17,11 +17,24 @@ use Illuminate\Http\Request;
  */
 class SubjectController extends Controller
 {
+    /**
+     * Displays the add subject form
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function add()
     {
         return view('public.add-user');
     }
 
+    /**
+     * Processes subject form
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
+     */
     public function post(Request $request)
     {
         // Filter input
@@ -30,8 +43,8 @@ class SubjectController extends Controller
         ]);
         // Validate input
         $this->validate($request, [
-            'name'        => 'required|max:24',
-            'image'       => 'required|mimes:png,jpeg,jpg,gif|max:1024'
+            'name'  => 'required|max:24',
+            'image' => 'required|mimes:png,jpeg,jpg,gif|max:1024'
         ]);
         $subject = new Subject([
             'name' => $request->get('name'),
@@ -43,20 +56,32 @@ class SubjectController extends Controller
 
         if (file_exists($target)) {
             return redirect('/add-user')->with('message', 'User added!');
+        } else {
+            $subject->delete();
+            throw new \Exception('Could not process image file. User was not created');
         }
     }
 
-    /*
+    /**
+     * Resize an image
+     *
+     * Controller is not the ideal place for this, but we'll roll with it for now
+     *
      * Crop-to-fit PHP-GD
      * http://salman-w.blogspot.com/2009/04/crop-to-fit-image-using-aspphp.html
      *
      * Resize and center crop an arbitrary size image to fixed width and height
      * e.g. convert a large portrait/landscape image to a small square thumbnail
+     *
+     * @param string $src
+     * @param string $target
+     * @param int    $width
+     * @param int    $height
      */
     protected function resizeImage($src, $target, $width, $height)
-    {        
+    {
         list($source_width, $source_height, $source_type) = getimagesize($src);
-        
+
         switch ($source_type) {
             case IMAGETYPE_GIF:
                 $source_gdim = imagecreatefromgif($src);
@@ -68,28 +93,28 @@ class SubjectController extends Controller
                 $source_gdim = imagecreatefrompng($src);
                 break;
         }
-        
-        $source_aspect_ratio = $source_width / $source_height;
+
+        $source_aspect_ratio  = $source_width / $source_height;
         $desired_aspect_ratio = $width / $height;
-        
+
         if ($source_aspect_ratio > $desired_aspect_ratio) {
             /*
              * Triggered when source image is wider
              */
             $temp_height = $height;
-            $temp_width = ( int ) ($height * $source_aspect_ratio);
+            $temp_width  = ( int )($height * $source_aspect_ratio);
         } else {
             /*
              * Triggered otherwise (i.e. source image is similar or taller)
              */
-            $temp_width = $width;
-            $temp_height = ( int ) ($width / $source_aspect_ratio);
+            $temp_width  = $width;
+            $temp_height = ( int )($width / $source_aspect_ratio);
         }
-        
+
         /*
          * Resize the image into a temporary GD image
          */
-        
+
         $temp_gdim = imagecreatetruecolor($temp_width, $temp_height);
         imagecopyresampled(
             $temp_gdim,
@@ -99,13 +124,13 @@ class SubjectController extends Controller
             $temp_width, $temp_height,
             $source_width, $source_height
         );
-        
+
         /*
          * Copy cropped region from temporary image into the desired GD image
          */
-        
-        $x0 = ($temp_width - $width) / 2;
-        $y0 = ($temp_height - $height) / 2;
+
+        $x0           = ($temp_width - $width) / 2;
+        $y0           = ($temp_height - $height) / 2;
         $desired_gdim = imagecreatetruecolor($width, $height);
         imagecopy(
             $desired_gdim,
@@ -114,7 +139,7 @@ class SubjectController extends Controller
             $x0, $y0,
             $width, $height
         );
-        
+
         /*
          * Render the image
          * Alternatively, you can save the image in file-system or database
