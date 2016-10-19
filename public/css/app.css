@@ -62,18 +62,23 @@ header {
     max-width: 520px;
     vertical-align: middle;
     -webkit-transition: 1s ease-in-out opacity;
-    transition: 1s ease-in-out opacity; }
+    transition: 1s ease-in-out opacity;
+    overflow: hidden;
+    padding-bottom: 20px;
+    /*&.subject-1 {
+      background: blue;
+    }
+    &.subject-2 {
+      background: red;
+    }*/ }
     .face-off .subject.the-chosen-one {
       -webkit-transition: 1s ease-in-out all;
       transition: 1s ease-in-out all;
-      width: 100%;
       -webkit-animation: 1.5s flash;
       animation: 1.5s flash; }
     .face-off .subject.the-deleted-one {
-      -webkit-transition: 1s ease-in-out all;
-      transition: 1s ease-in-out all;
-      width: 0;
-      opacity: 0; }
+      -webkit-animation: 1s disappear forwards;
+      animation: 1s disappear forwards; }
     .face-off .subject.incoming {
       opacity: 0; }
       .face-off .subject.incoming .subject-img-1 {
@@ -181,5 +186,21 @@ table {
   10% {
     -webkit-filter: brightness(150%);
     filter: brightness(150%); } }
+
+@-webkit-keyframes disappear {
+  0% {
+    height: auto; }
+  100% {
+    opacity: 0;
+    width: 0;
+    height: 0; } }
+
+@keyframes disappear {
+  0% {
+    height: auto; }
+  100% {
+    opacity: 0;
+    width: 0;
+    height: 0; } }
 
 /*# sourceMappingURL=app.css.map */

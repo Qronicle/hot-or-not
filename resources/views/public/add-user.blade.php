@@ -14,7 +14,7 @@
 
     <div class="form-group">
         {{ Form::label('Name') }}
-        {{ Form::text('name', null) }}
+        {{ Form::text('name', null, ['maxlength' => 24]) }}
     </div>
 
     <div class="form-group">

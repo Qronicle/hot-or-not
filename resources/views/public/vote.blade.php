@@ -26,11 +26,6 @@
                     e.preventDefault();
                     // Prevent page from jumping to the top when next images are loading
                     $form.css('min-height', $form.height() + 'px');
-                    // Prevent images from scaling automatically on small devices, because render error in Safari
-                    //$form.find('.subject-img').each(function() {
-                        $(this).css('height', $(this).height() + 'px');
-                        //$(this).css('min-width', $(this).width() + 'px');
-                    //});
                     if (!canChoose) return;
                     isOut = false;
                     canChoose = false;
@@ -52,7 +47,12 @@
                             alert('Could not load the next match. Please refresh the page');
                         }
                     });
-                    $(this).closest('.subject').addClass('the-chosen-one').siblings().addClass('the-deleted-one');
+                    $(this).closest('.subject').addClass('the-chosen-one').siblings().each(function() {
+                        $(this).animate({width: 0}, 1000, function(){
+                            $(this).hide();
+                        });
+                        $(this).find('>*').animate({opacity: 0}, 980);
+                    });
                     setTimeout(function () {
                         isOut = true;
                         startNewRound();

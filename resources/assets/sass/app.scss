@@ -87,21 +87,22 @@ header {
     max-width: 520px;
     vertical-align: middle;
     transition: 1s ease-in-out opacity;
+    overflow: hidden;
+    padding-bottom: 20px;
 
-    &.subject-1 {
+    /*&.subject-1 {
+      background: blue;
     }
-
     &.subject-2 {
-    }
+      background: red;
+    }*/
     &.the-chosen-one {
       transition: 1s ease-in-out all;
-      width: 100%;
       animation: 1.5s flash;
     }
     &.the-deleted-one {
-      transition: 1s ease-in-out all;
-      width: 0;
-      opacity: 0;
+      animation: 1s disappear forwards;
+
     }
     &.incoming {
       opacity: 0;
@@ -246,5 +247,16 @@ table {
   }
   10% {
     filter: brightness(150%);
+  }
+}
+
+@keyframes disappear {
+  0% {
+    height: auto;
+  }
+  100% {
+    opacity: 0;
+    width: 0;
+    height: 0;
   }
 }

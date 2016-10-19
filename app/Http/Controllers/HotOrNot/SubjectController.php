@@ -30,7 +30,7 @@ class SubjectController extends Controller
         ]);
         // Validate input
         $this->validate($request, [
-            'name'        => 'required',
+            'name'        => 'required|max:24',
             'image'       => 'required|mimes:png,jpeg,jpg,gif|max:1024'
         ]);
         $subject = new Subject([
